@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fractions Subtraction Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        #game-container {
+            border: 2px dashed #000;
+            display: inline-block;
+            padding: 20px;
+        }
+        #question {
+            font-size: 28px;
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .answer-container {
+            display: inline-flex;
+            align-items: center;
+        }
+        input {
+            padding: 5px;
+            font-size: 16px;
+            text-align: center;
+            width: 60px;
+            margin: 0 5px;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        #score {
+            font-size: 20px;
+            margin-top: 10px;
+        }
+        .fraction {
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .fraction .numerator {
+            border-bottom: 1px solid #000;
+            display: block;
+            padding-bottom: 5px;
+        }
+        .fraction .denominator {
+            display: block;
+            padding-top: 5px;
+        }
+        .answer-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .line {
+            width: 60px;
+            border-top: 2px solid black;
+            margin: 3px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fractions Subtraction Game</h1>
+    <div id="game-container">
+        <div class="answer-container">
+            <p id="question"></p>
+            <input type="text" id="whole-answer" placeholder="Whole">
+            <div class="answer-box">
+                <input type="text" id="numerator-answer" placeholder="Num">
+                <div class="line"></div>
+                <input type="text" id="denominator-answer" placeholder="Den">
+            </div>
+        </div>
+        <p id="feedback"></p>
+        <button onclick="checkAnswer()">Submit</button>
+        <p id="score">Score: 0</p>
+    </div>
+    
+    <script>
+        let score = 0;
+        let currentWhole, currentNumerator, currentDenominator;
+        let questionAnswered = false;
+
+        function generateQuestion() {
+            currentWhole = Math.floor(Math.random() * 10) + 1;
+            currentDenominator = Math.floor(Math.random() * 9) + 2; 
+            currentNumerator = Math.floor(Math.random() * (currentDenominator - 1)) + 1;
+            document.getElementById("question").innerHTML = `${currentWhole} - <span class='fraction'><span class='numerator'>${currentNumerator}</span><span class='denominator'>${currentDenominator}</span></span> =`;
+            document.getElementById("whole-answer").value = "";
+            document.getElementById("numerator-answer").value = "";
+            document.getElementById("denominator-answer").value = "";
+            document.getElementById("feedback").innerText = "";
+            questionAnswered = false;
+        }
+
+        function checkAnswer() {
+            if (questionAnswered) return;
+            questionAnswered = true;
+            
+            const wholeAnswer = document.getElementById("whole-answer").value.trim();
+            const numeratorAnswer = document.getElementById("numerator-answer").value.trim();
+            const denominatorAnswer = document.getElementById("denominator-answer").value.trim();
+            const correctDecimal = (currentWhole - (currentNumerator / currentDenominator)).toFixed(4);
+            const correctWhole = Math.floor(correctDecimal);
+            const correctFraction = correctDecimal - correctWhole;
+            const correctNumerator = Math.round(correctFraction * currentDenominator);
+
+            if (
+                parseInt(wholeAnswer) === correctWhole &&
+                parseInt(numeratorAnswer) === correctNumerator &&
+                parseInt(denominatorAnswer) === currentDenominator
+            ) {
+                score++;
+                document.getElementById("feedback").innerText = "Correct!";
+            } else {
+                document.getElementById("feedback").innerText = `Wrong! The correct answer is ${correctWhole} ${correctNumerator}/${currentDenominator}`;
+            }
+            document.getElementById("score").innerText = `Score: ${score}`;
+            setTimeout(generateQuestion, 1500);
+        }
+        
+        document.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                checkAnswer();
+            }
+        });
+        
+        generateQuestion();
+    </script>
+</body>
+</html>
